@@ -24,11 +24,12 @@ Content-Type: application/json
 
 ### Get current user (/me)
 # Requires the session cookie; when `rest-client.rememberCookiesForSubsequentRequests` is true this will be sent automatically
-GET http://localhost:4040/me
+GET http://localhost:4040/session/me
 Authorization: Bearer {{token}}
 Content-Type: application/json
+
 ### Logout
 # Logs out the current session
-POST http://localhost:4040/logout
+DELETE  http://localhost:4040/session/logout
 Authorization: Bearer {{token}}
 Content-Type: application/json

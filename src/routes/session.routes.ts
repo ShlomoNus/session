@@ -13,7 +13,7 @@ sessionRouter.get("/me", requireCompanySession, (_req, res) => {
   });
 });
 
-sessionRouter.post("/logout", requireCompanySession, (req, res) => {
+sessionRouter.delete("/logout", requireCompanySession, (req, res) => {
   const sid = (req.cookies?.sid as string | undefined) ?? null;
   if (sid) revokeSessionById(sid);
 
