@@ -32,4 +32,4 @@ Content-Type: application/json
 # Logs out the current session
 DELETE  http://localhost:4040/session/logout
 Authorization: Bearer {{token}}
-Content-Type: application/json
+Content-Type: application/json 
