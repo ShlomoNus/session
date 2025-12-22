@@ -1,0 +1,34 @@
+### Login
+# @name login
+POST http://localhost:4040/login
+Content-Type: application/json
+
+{
+  "username": "myUser",
+  "password": "myPassword"
+}
+
+### Capture the token after the login request completes
+@token = {{login.response.body.accessToken}}
+
+### Select Company
+# This request will automatically send any cookies set in the login response
+POST http://localhost:4040/select-company
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "companyId": "company-1",
+  "userId": "user-1"
+}
+
+### Get current user (/me)
+# Requires the session cookie; when `rest-client.rememberCookiesForSubsequentRequests` is true this will be sent automatically
+GET http://localhost:4040/me
+Authorization: Bearer {{token}}
+Content-Type: application/json
+### Logout
+# Logs out the current session
+POST http://localhost:4040/logout
+Authorization: Bearer {{token}}
+Content-Type: application/json
