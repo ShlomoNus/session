@@ -11,7 +11,7 @@ export const companyRouter = Router();
  * Stores session id in HttpOnly cookie.
  */
 companyRouter.post("/select-company", (req, res) => {
-  const { companyId, userId } = req.body as {
+  const { userId, companyId } = req.body as {
     userId?: string;
     companyId?: string;
   };
@@ -24,7 +24,6 @@ companyRouter.post("/select-company", (req, res) => {
     return res.status(400).json({ error: "companyId is required" });
   }
 
-  // O(1): replaces previous session for that user (no loops)
   const session = createOrReplaceCompanySession({ userId, companyId });
 
   res.cookie("sid", session.id, {

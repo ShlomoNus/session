@@ -4,8 +4,8 @@ POST http://localhost:4040/login
 Content-Type: application/json
 
 {
-  "username": "myUser",
-  "password": "myPassword"
+  "username": "user-2",
+  "password": "pass2"
 }
 
 ### Capture the token after the login request completes

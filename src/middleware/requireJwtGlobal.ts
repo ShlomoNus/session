@@ -25,7 +25,6 @@ export function requireJwtGlobal(
   }
 
   try {
-    // validation only
     jwt.verify(token, JWT_SECRET);
     next();
   } catch {

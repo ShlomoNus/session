@@ -1,7 +1,7 @@
-import crypto from "crypto";
+import crypto from 'crypto';
 
 export type CompanySession = {
-  id: string; // sessionId (sid cookie)
+  id: string;
   userId: string;
   companyId: string;
   createdAt: number;
@@ -10,81 +10,78 @@ export type CompanySession = {
   revokedAt?: number;
 };
 
-const TTL_MS = 30 * 60 * 1000; // 30 minutes
+export type Params = {
+  userId: string;
+  companyId: string;
+};
 
-// Primary store: one session per user
-const sessionsByUserId = new Map<string, CompanySession>();
+const TTL_MS = 30 * 60 * 1000;
 
-// Secondary index: sid -> userId (for cookie lookup)
-const userIdBySessionId = new Map<string, string>();
+const sessionsById = new Map<string, CompanySession>();
 
-export function createOrReplaceCompanySession(params: { userId: string; companyId: string }) {
+export function createOrReplaceCompanySession(params: Params): CompanySession {
   const now = Date.now();
-
-  // If user already has an active session, revoke it and remove old sid index
-  const existing = sessionsByUserId.get(params.userId);
-  if (existing) {
-    existing.revokedAt = now;
-    userIdBySessionId.delete(existing.id);
-    // replace session object entirely below
+  for (const session of sessionsById.values()) {
+    if (session.userId === params.userId && !session.revokedAt) {
+      session.revokedAt = now;
+    }
   }
-
   const session: CompanySession = {
-    id: crypto.randomBytes(24).toString("hex"),
+    id: crypto.randomBytes(24).toString('hex'),
     userId: params.userId,
     companyId: params.companyId,
     createdAt: now,
     lastSeenAt: now,
     expiresAt: now + TTL_MS,
   };
-
-  sessionsByUserId.set(params.userId, session);
-  userIdBySessionId.set(session.id, params.userId);
-
+  sessionsById.set(session.id, session);
   return session;
 }
 
-export function getSessionByUserId(userId: string) {
-  return sessionsByUserId.get(userId);
+export function getSessionByUserId(userId: string): CompanySession | undefined {
+  for (const session of sessionsById.values()) {
+    if (session.userId === userId) {
+      return session;
+    }
+  }
+  return undefined;
 }
 
-export function getSessionById(sessionId: string) {
-  const userId = userIdBySessionId.get(sessionId);
-  if (!userId) return undefined;
-  return sessionsByUserId.get(userId);
+export function getSessionById(sessionId: string): CompanySession | undefined {
+  return sessionsById.get(sessionId);
 }
 
-export function revokeSessionByUserId(userId: string) {
-  const s = sessionsByUserId.get(userId);
-  if (!s) return false;
-
-  s.revokedAt = Date.now();
-  sessionsByUserId.set(userId, s);
-  userIdBySessionId.delete(s.id);
-  return true;
-}
-
-export function revokeSessionById(sessionId: string) {
-  const userId = userIdBySessionId.get(sessionId);
-  if (!userId) return false;
-  return revokeSessionByUserId(userId);
-}
-
-export function touchSessionById(sessionId: string) {
-  const s = getSessionById(sessionId);
-  if (!s) return null;
-
+export function revokeSessionByUserId(userId: string): boolean {
+  let revoked = false;
   const now = Date.now();
-  s.lastSeenAt = now;
-  s.expiresAt = now + TTL_MS;
-
-  sessionsByUserId.set(s.userId, s);
-  // indexes stay valid
-  return s;
+  for (const session of sessionsById.values()) {
+    if (session.userId === userId && !session.revokedAt) {
+      session.revokedAt = now;
+      revoked = true;
+    }
+  }
+  return revoked;
 }
 
-export function isValidSession(s: CompanySession) {
-  if (s.revokedAt) return false;
-  if (s.expiresAt <= Date.now()) return false;
+export function revokeSessionById(sessionId: string): boolean {
+  const session = sessionsById.get(sessionId);
+  if (!session) return false;
+  if (!session.revokedAt) {
+    session.revokedAt = Date.now();
+  }
   return true;
+}
+
+export function touchSessionById(sessionId: string): CompanySession | null {
+  const session = sessionsById.get(sessionId);
+  if (!session) return null;
+  const now = Date.now();
+  session.lastSeenAt = now;
+  session.expiresAt = now + TTL_MS;
+  return session;
+}
+
+export function isValidSession(s: CompanySession): boolean {
+  if (s.revokedAt) return false;
+  return s.expiresAt > Date.now();
 }
