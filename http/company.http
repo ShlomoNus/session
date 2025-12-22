@@ -1,0 +1,9 @@
+### Select company
+POST http://localhost:4040/select-company
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyLTEyMyIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2NjM5ODk3MCwiZXhwIjoxNzY2Mzk5ODcwfQ.eWVLncJ1KYfRKHs2g3aNEC-LI2Eq34-k7a4zQD3Xz9M
+Content-Type: application/json
+
+{
+  "companyId": "company-1",
+  "userId": "user-1"
+}

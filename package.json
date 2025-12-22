@@ -1,0 +1,31 @@
+{
+  "name": "session",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "npx tsx ./src/server.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@types/compression": "^1.8.1",
+    "@types/jsonwebtoken": "^9.0.10",
+    "compression": "^1.8.1",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "express-session": "^1.18.2",
+    "jsonwebtoken": "^9.0.3",
+    "tsx": "^4.21.0"
+  },
+  "devDependencies": {
+    "@types/cookie-parser": "^1.4.10",
+    "@types/express": "^5.0.6",
+    "@types/express-session": "^1.18.2",
+    "@types/node": "^25.0.3",
+    "typescript": "^5.9.3"
+  }
+}
