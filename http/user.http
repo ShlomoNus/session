@@ -28,6 +28,12 @@ GET http://localhost:4040/session/me
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
+
+### Get only admin (/adminOnly), should fail as user is not admin
+# Requires the session cookie; when `rest-client.rememberCookiesForSubsequentRequests` is true this will be sent automatically
+GET http://localhost:4040/session/adminOnly
+Authorization: Bearer {{token}}
+
 ### Logout
 # Logs out the current session
 DELETE  http://localhost:4040/session/logout

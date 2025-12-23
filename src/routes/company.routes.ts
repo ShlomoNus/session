@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { createOrReplaceCompanySession } from "../session/sessionStore";
+import { users } from "../db";
 
 export const companyRouter = Router();
 
@@ -24,7 +25,12 @@ companyRouter.post("/select-company", (req, res) => {
     return res.status(400).json({ error: "companyId is required" });
   }
 
-  const session = createOrReplaceCompanySession({ userId, companyId });
+  const user = users.filter((u) => u.id === userId && u.companyId === companyId)[0]
+
+  if (!user?.role) {
+    return res.status(403).json({ error: "User does not belong to the specified company" });
+  }
+  const session = createOrReplaceCompanySession({ userId, companyId, role: user.role });
 
   res.cookie("sid", session.id, {
     httpOnly: true,

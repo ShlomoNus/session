@@ -4,6 +4,7 @@ export type CompanySession = {
   id: string;
   userId: string;
   companyId: string;
+  role: string;
   createdAt: number;
   lastSeenAt: number;
   expiresAt: number;
@@ -13,23 +14,25 @@ export type CompanySession = {
 export type Params = {
   userId: string;
   companyId: string;
+  role: string;
 };
 
 const TTL_MS = 30 * 60 * 1000;
 
 const sessionsById = new Map<string, CompanySession>();
 
-export function createOrReplaceCompanySession(params: Params): CompanySession {
+export function createOrReplaceCompanySession({ userId, companyId, role }: Params): CompanySession {
   const now = Date.now();
   for (const session of sessionsById.values()) {
-    if (session.userId === params.userId && !session.revokedAt) {
+    if (session.userId === userId && !session.revokedAt) {
       session.revokedAt = now;
     }
   }
   const session: CompanySession = {
     id: crypto.randomBytes(24).toString('hex'),
-    userId: params.userId,
-    companyId: params.companyId,
+    userId: userId,
+    companyId: companyId,
+    role,
     createdAt: now,
     lastSeenAt: now,
     expiresAt: now + TTL_MS,

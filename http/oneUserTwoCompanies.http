@@ -1,0 +1,63 @@
+### Login
+# @name login
+POST http://localhost:4040/login
+Content-Type: application/json
+
+{
+  "username": "user-2",
+  "password": "pass2"
+}
+
+### Capture the token after the login request completes
+@token = {{login.response.body.accessToken}}
+
+### Select Company
+# This request will automatically send any cookies set in the login response
+POST http://localhost:4040/select-company
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "companyId": "company-2",
+  "userId": "2"
+}
+
+### Get current user (/me)
+# Requires the session cookie; when `rest-client.rememberCookiesForSubsequentRequests` is true this will be sent automatically
+GET http://localhost:4040/session/me
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+
+### Get only admin (/adminOnly), should fail as user is not admin
+# Requires the session cookie; when `rest-client.rememberCookiesForSubsequentRequests` is true this will be sent automatically
+GET http://localhost:4040/session/adminOnly
+Authorization: Bearer {{token}}
+
+### Select Second Company
+# This request will automatically send any cookies set in the login response
+POST http://localhost:4040/select-company
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "companyId": "company-11",
+  "userId": "2"
+}
+
+### Get current user (/me)
+# Requires the session cookie; when `rest-client.rememberCookiesForSubsequentRequests` is true this will be sent automatically
+GET http://localhost:4040/session/me
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+### Get only admin (/adminOnly)
+# Requires the session cookie; when `rest-client.rememberCookiesForSubsequentRequests` is true this will be sent automatically
+GET http://localhost:4040/session/adminOnly
+Authorization: Bearer {{token}}
+
+### Logout
+# Logs out the current session
+DELETE  http://localhost:4040/session/logout
+Authorization: Bearer {{token}}
+Content-Type: application/json 

@@ -18,9 +18,8 @@ authRouter.post('/login', (req, res) => {
     return res.status(401).json({ message: 'Invalid credentials' });
   }
 
-  // Sign JWT with user username (username) and role
   const accessToken = jwt.sign(
-    { username: user.username, role: user.role },
+    { username: user.username, companyId: user.companyId },
     JWT_SECRET,
     { expiresIn: JWT_EXPIRES_IN }
   );

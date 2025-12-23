@@ -4,8 +4,8 @@ POST http://localhost:4040/login
 Content-Type: application/json
 
 {
-  "username": "user-1",
-  "password": "pass1"
+  "username": "admin-1",
+  "password": "passAdmin1"
 }
 
 ### Capture the token after the login request completes
@@ -19,12 +19,18 @@ Content-Type: application/json
 
 {
   "companyId": "company-1",
-  "userId": "1"
+  "userId": "11"
 }
 
 ### Get current user (/me)
 # Requires the session cookie; when `rest-client.rememberCookiesForSubsequentRequests` is true this will be sent automatically
 GET http://localhost:4040/session/me
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+### Get only admin (/adminOnly)
+# Requires the session cookie; when `rest-client.rememberCookiesForSubsequentRequests` is true this will be sent automatically
+GET http://localhost:4040/session/adminOnly
 Authorization: Bearer {{token}}
 Content-Type: application/json
 

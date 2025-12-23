@@ -4,16 +4,28 @@ import { revokeSessionById } from "../session/sessionStore";
 
 export const sessionRouter = Router();
 
-sessionRouter.get("/me", requireCompanySession, (_req, res) => {
+sessionRouter.get("/me", requireCompanySession({allowedRoles: ["admin", "user"]}), (_req, res) => {
   const s = res.locals.session;
 
   res.json({
     companyId: s.companyId,
     expiresAt: s.expiresAt,
+    role: s.role,
   });
 });
 
-sessionRouter.delete("/logout", requireCompanySession, (req, res) => {
+sessionRouter.get("/adminOnly", requireCompanySession({allowedRoles: ["admin"]}), (_req, res) => {
+  const s = res.locals.session;
+
+  res.json({
+    companyId: s.companyId,
+    expiresAt: s.expiresAt,
+    role: s.role,
+  });
+});
+
+
+sessionRouter.delete("/logout", requireCompanySession({allowedRoles: ["admin", "user"]}), (req, res) => {
   const sid = (req.cookies?.sid as string | undefined) ?? null;
   if (sid) revokeSessionById(sid);
 
